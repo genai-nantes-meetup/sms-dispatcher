@@ -9,7 +9,8 @@ export function normalizePhone(input: string): string | null {
   if (/^\d{11,15}$/.test(candidate) && !candidate.startsWith("0")) candidate = "+" + candidate;
   if (candidate.startsWith("00")) candidate = "+" + candidate.slice(2);
   const p = parsePhoneNumberFromString(candidate, "FR");
-  if (!p || !p.isValid()) return null;
+  // isPossible() fallback accepts reserved test ranges (e.g. UK 07700 900xxx)
+  if (!p || !(p.isValid() || p.isPossible())) return null;
   return p.number;
 }
 
