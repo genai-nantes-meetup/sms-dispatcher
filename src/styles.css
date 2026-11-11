@@ -126,3 +126,15 @@
     -webkit-font-smoothing: antialiased;
   }
 }
+
+@layer components {
+  /* Google branding: light theme, fixed colours per Google guidelines */
+  .google-btn {
+    display: flex; width: 100%; align-items: center; justify-content: center; gap: 10px;
+    padding: 10px 12px; border-radius: var(--radius); border: 1px solid #747775;
+    background: #ffffff; color: #1f1f1f; font-weight: 500; font-size: 14px; line-height: 20px;
+    cursor: pointer; transition: box-shadow .15s;
+  }
+  .google-btn:hover { box-shadow: 0 1px 3px rgb(0 0 0 / .15); }
+  .google-btn:disabled { opacity: .6; cursor: not-allowed; }
+}
