@@ -108,10 +108,10 @@ function ImportPage() {
                     {rows.map((r) => (
                       <tr key={r.line} className={`border-t align-top ${r.errors.length ? "bg-destructive/10" : ""}`}>
                         <td className="p-3 text-muted-foreground">{r.line}</td>
-                        <td className="whitespace-nowrap p-3">{r.phone ? formatPhone(r.phone) : r.raw.phone}</td>
+                        <td className="whitespace-nowrap p-3">{r.phone ? formatPhone(r.phone) : r.raw["phone"]}</td>
                         <td className="p-3">{r.name}</td>
                         <td className="max-w-xs p-3"><span className="line-clamp-2">{r.message}</span></td>
-                        <td className="whitespace-nowrap p-3">{r.sendAt ? fmtParis(r.sendAt.toISOString()) : r.raw.send_at}</td>
+                        <td className="whitespace-nowrap p-3">{r.sendAt ? fmtParis(r.sendAt.toISOString()) : r.raw["send_at"]}</td>
                         <td className="p-3">{r.errors.length ? <span className="text-xs font-medium text-destructive">{r.errors.join(", ")}</span> : <span className="text-xs font-medium text-success">OK</span>}</td>
                       </tr>
                     ))}

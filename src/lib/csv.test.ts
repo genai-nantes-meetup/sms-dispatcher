@@ -11,18 +11,18 @@ describe("csv import", () => {
     const { rows } = parseSmsCsv(DEMO_CSV, NOW);
     expect(rows).toHaveLength(4);
     expect(rows.every((r) => r.errors.length === 0)).toBe(true);
-    expect(rows[3].phone).toBe("+447700900004");
+    expect(rows[3]!.phone).toBe("+447700900004");
   });
   it("works with ; delimiter and BOM", () => {
     const semi = "\uFEFFphone;name;message;send_at\n0600000002;Bruno;Hello, there;01/12/2026 09:30\n";
     const { rows } = parseSmsCsv(semi, NOW);
-    expect(rows[0].errors).toEqual([]);
-    expect(rows[0].message).toBe("Hello, there");
+    expect(rows[0]!.errors).toEqual([]);
+    expect(rows[0]!.message).toBe("Hello, there");
   });
   it("flags invalid phone and past date", () => {
     const { rows } = parseSmsCsv("phone,name,message,send_at\n123,X,Hi,2020-01-01 10:00\n", NOW);
-    expect(rows[0].errors).toContain("Invalid phone");
-    expect(rows[0].errors).toContain("send_at is in the past");
+    expect(rows[0]!.errors).toContain("Invalid phone");
+    expect(rows[0]!.errors).toContain("send_at is in the past");
   });
 });
 

@@ -27,11 +27,11 @@ export function parseSmsCsv(text: string, now = new Date()): { rows: CsvRow[]; h
   if (missing.length) return { rows: [], headerError: `Missing column(s): ${missing.join(", ")}` };
   const rows = res.data.map((raw, i) => {
     const errors: string[] = [];
-    const phone = normalizePhone(raw.phone ?? "");
+    const phone = normalizePhone(raw["phone"] ?? "");
     if (!phone) errors.push("Invalid phone");
-    const name = (raw.name ?? "").trim(); if (!name) errors.push("Name is empty");
-    const message = (raw.message ?? "").trim(); if (!message) errors.push("Message is empty");
-    const sendAt = parseCsvDate(raw.send_at ?? "");
+    const name = (raw["name"] ?? "").trim(); if (!name) errors.push("Name is empty");
+    const message = (raw["message"] ?? "").trim(); if (!message) errors.push("Message is empty");
+    const sendAt = parseCsvDate(raw["send_at"] ?? "");
     if (!sendAt) errors.push("Invalid send_at");
     else if (sendAt.getTime() <= now.getTime()) errors.push("send_at is in the past");
     return { line: i + 2, raw, phone, name, message, sendAt, errors };

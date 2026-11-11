@@ -14,11 +14,11 @@ export function nowParisInput(offsetMin = 0) {
 /** Parse "YYYY-MM-DD HH:mm" or "DD/MM/YYYY HH:mm" (Paris). */
 export function parseCsvDate(s: string): Date | null {
   const v = (s ?? "").trim();
-  let m = v.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{1,2}):(\d{2})$/);
   let iso: string | null = null;
-  if (m) iso = `${m[1]}-${m[2]}-${m[3]}T${m[4].padStart(2, "0")}:${m[5]}`;
-  m = v.match(/^(\d{2})\/(\d{2})\/(\d{4}) (\d{1,2}):(\d{2})$/);
-  if (m) iso = `${m[3]}-${m[2]}-${m[1]}T${m[4].padStart(2, "0")}:${m[5]}`;
+  const a = v.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{1,2}):(\d{2})$/);
+  if (a) iso = `${a[1]}-${a[2]}-${a[3]}T${(a[4] ?? "").padStart(2, "0")}:${a[5]}`;
+  const b = v.match(/^(\d{2})\/(\d{2})\/(\d{4}) (\d{1,2}):(\d{2})$/);
+  if (b) iso = `${b[3]}-${b[2]}-${b[1]}T${(b[4] ?? "").padStart(2, "0")}:${b[5]}`;
   if (!iso) return null;
   const d = parisToDate(iso);
   return isNaN(d.getTime()) ? null : d;

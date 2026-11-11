@@ -5,5 +5,5 @@ export function isAllowedEmail(email: string | null | undefined): boolean {
   if (!email) return false;
   const parts = email.split("@");
   if (parts.length !== 2) return false;
-  return ALLOWED_DOMAINS.includes(parts[1].toLowerCase());
+  return ALLOWED_DOMAINS.includes((parts[1] ?? "").toLowerCase());
 }

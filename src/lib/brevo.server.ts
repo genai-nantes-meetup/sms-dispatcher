@@ -23,9 +23,9 @@ export async function sendViaBrevo(phoneE164: string, content: string) {
     let body: Record<string, unknown> = {};
     try { body = JSON.parse(text); } catch { /* not json */ }
     if (!res.ok) {
-      return { ok: false as const, error: `Brevo ${res.status}: ${(body.message as string) ?? text}` };
+      return { ok: false as const, error: `Brevo ${res.status}: ${(body["message"] as string) ?? text}` };
     }
-    const id = body.messageId ?? body.reference ?? null;
+    const id = body["messageId"] ?? body["reference"] ?? null;
     return { ok: true as const, messageId: id != null ? String(id) : null };
   } catch (e) {
     return { ok: false as const, error: e instanceof Error ? e.message : String(e) };
