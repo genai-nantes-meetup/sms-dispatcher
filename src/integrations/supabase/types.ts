@@ -42,6 +42,7 @@ export type Database = {
         Row: {
           attempts: number
           brevo_message_id: string | null
+          claimed_at: string | null
           content: string
           created_at: string
           created_by: string
@@ -59,6 +60,7 @@ export type Database = {
         Insert: {
           attempts?: number
           brevo_message_id?: string | null
+          claimed_at?: string | null
           content: string
           created_at?: string
           created_by?: string
@@ -76,6 +78,7 @@ export type Database = {
         Update: {
           attempts?: number
           brevo_message_id?: string | null
+          claimed_at?: string | null
           content?: string
           created_at?: string
           created_by?: string
@@ -110,6 +113,7 @@ export type Database = {
         Returns: {
           attempts: number
           brevo_message_id: string | null
+          claimed_at: string | null
           content: string
           created_at: string
           created_by: string
