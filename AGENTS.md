@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Brevo calls live only in `src/lib/brevo.server.ts`, imported dynamically inside server handlers — keeps the API key off the browser.
+- Domain allowlist is enforced three times: `auth.users` trigger, `is_allowed_user()` in every RLS policy, and `isAllowedEmail` in server functions/route guard — never rely on the UI alone.
+- Scheduled sends go through the `claim_due_sms` SQL function (FOR UPDATE SKIP LOCKED) from `/api/public/jobs/dispatch-due-sms`; stuck `sending` rows are failed, never auto-resent — prevents duplicate SMS.
+- All user-facing times are Europe/Paris via `src/lib/time.ts`; DB stores UTC.
