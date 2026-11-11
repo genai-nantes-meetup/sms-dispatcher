@@ -10,12 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthenticatedHistoryRouteImport } from './routes/_authenticated/history'
+import { Route as AuthenticatedImportRouteImport } from './routes/_authenticated/import'
+import { Route as AuthenticatedNewRouteImport } from './routes/_authenticated/new'
+import { Route as AuthenticatedRecipientsRouteImport } from './routes/_authenticated/recipients'
+import { Route as AuthenticatedScheduledRouteImport } from './routes/_authenticated/scheduled'
 import { Route as ApiPublicJobsDispatchDueSmsRouteImport } from './routes/api/public/jobs/dispatch-due-sms'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedHistoryRoute = AuthenticatedHistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedImportRoute = AuthenticatedImportRouteImport.update({
+  id: '/import',
+  path: '/import',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNewRoute = AuthenticatedNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedRecipientsRoute = AuthenticatedRecipientsRouteImport.update({
+  id: '/recipients',
+  path: '/recipients',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedScheduledRoute = AuthenticatedScheduledRouteImport.update({
+  id: '/scheduled',
+  path: '/scheduled',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const ApiPublicJobsDispatchDueSmsRoute =
   ApiPublicJobsDispatchDueSmsRouteImport.update({
@@ -26,27 +67,74 @@ const ApiPublicJobsDispatchDueSmsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/history': typeof AuthenticatedHistoryRoute
+  '/import': typeof AuthenticatedImportRoute
+  '/new': typeof AuthenticatedNewRoute
+  '/recipients': typeof AuthenticatedRecipientsRoute
+  '/scheduled': typeof AuthenticatedScheduledRoute
   '/api/public/jobs/dispatch-due-sms': typeof ApiPublicJobsDispatchDueSmsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/history': typeof AuthenticatedHistoryRoute
+  '/import': typeof AuthenticatedImportRoute
+  '/new': typeof AuthenticatedNewRoute
+  '/recipients': typeof AuthenticatedRecipientsRoute
+  '/scheduled': typeof AuthenticatedScheduledRoute
   '/api/public/jobs/dispatch-due-sms': typeof ApiPublicJobsDispatchDueSmsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_authenticated/history': typeof AuthenticatedHistoryRoute
+  '/_authenticated/import': typeof AuthenticatedImportRoute
+  '/_authenticated/new': typeof AuthenticatedNewRoute
+  '/_authenticated/recipients': typeof AuthenticatedRecipientsRoute
+  '/_authenticated/scheduled': typeof AuthenticatedScheduledRoute
   '/api/public/jobs/dispatch-due-sms': typeof ApiPublicJobsDispatchDueSmsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/public/jobs/dispatch-due-sms'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/history'
+    | '/import'
+    | '/new'
+    | '/recipients'
+    | '/scheduled'
+    | '/api/public/jobs/dispatch-due-sms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/public/jobs/dispatch-due-sms'
-  id: '__root__' | '/' | '/api/public/jobs/dispatch-due-sms'
+  to:
+    | '/'
+    | '/login'
+    | '/history'
+    | '/import'
+    | '/new'
+    | '/recipients'
+    | '/scheduled'
+    | '/api/public/jobs/dispatch-due-sms'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/login'
+    | '/_authenticated/history'
+    | '/_authenticated/import'
+    | '/_authenticated/new'
+    | '/_authenticated/recipients'
+    | '/_authenticated/scheduled'
+    | '/api/public/jobs/dispatch-due-sms'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  LoginRoute: typeof LoginRoute
   ApiPublicJobsDispatchDueSmsRoute: typeof ApiPublicJobsDispatchDueSmsRoute
 }
 
@@ -59,6 +147,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/history': {
+      id: '/_authenticated/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof AuthenticatedHistoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/import': {
+      id: '/_authenticated/import'
+      path: '/import'
+      fullPath: '/import'
+      preLoaderRoute: typeof AuthenticatedImportRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/new': {
+      id: '/_authenticated/new'
+      path: '/new'
+      fullPath: '/new'
+      preLoaderRoute: typeof AuthenticatedNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/recipients': {
+      id: '/_authenticated/recipients'
+      path: '/recipients'
+      fullPath: '/recipients'
+      preLoaderRoute: typeof AuthenticatedRecipientsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/scheduled': {
+      id: '/_authenticated/scheduled'
+      path: '/scheduled'
+      fullPath: '/scheduled'
+      preLoaderRoute: typeof AuthenticatedScheduledRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/jobs/dispatch-due-sms': {
       id: '/api/public/jobs/dispatch-due-sms'
       path: '/api/public/jobs/dispatch-due-sms'
@@ -69,8 +206,29 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedHistoryRoute: typeof AuthenticatedHistoryRoute
+  AuthenticatedImportRoute: typeof AuthenticatedImportRoute
+  AuthenticatedNewRoute: typeof AuthenticatedNewRoute
+  AuthenticatedRecipientsRoute: typeof AuthenticatedRecipientsRoute
+  AuthenticatedScheduledRoute: typeof AuthenticatedScheduledRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedHistoryRoute: AuthenticatedHistoryRoute,
+  AuthenticatedImportRoute: AuthenticatedImportRoute,
+  AuthenticatedNewRoute: AuthenticatedNewRoute,
+  AuthenticatedRecipientsRoute: AuthenticatedRecipientsRoute,
+  AuthenticatedScheduledRoute: AuthenticatedScheduledRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  LoginRoute: LoginRoute,
   ApiPublicJobsDispatchDueSmsRoute: ApiPublicJobsDispatchDueSmsRoute,
 }
 export const routeTree = rootRouteImport
