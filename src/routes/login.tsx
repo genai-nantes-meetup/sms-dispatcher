@@ -7,7 +7,7 @@ import { isAllowedEmail, RESTRICTED_MSG } from "@/lib/auth-domain";
 
 export const Route = createFileRoute("/login")({
   ssr: false,
-  validateSearch: (s: Record<string, unknown>) => ({ denied: s.denied === "1" || s.denied === 1 ? "1" : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ denied: s["denied"] === "1" || s["denied"] === 1 ? "1" : undefined }),
   head: () => ({
     meta: [
       { title: "Sign in · SMS Dispatcher" },

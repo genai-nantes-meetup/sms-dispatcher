@@ -34,12 +34,12 @@ function NewSms() {
   const [content, setContent] = useState("");
   const [mode, setMode] = useState<"now" | "schedule">("now");
   const [when, setWhen] = useState(nowParisInput(60));
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<{ recipient?: string; content?: string; when?: string }>({});
   const [busy, setBusy] = useState(false);
   const stats = smsStats(content);
 
   const submit = async () => {
-    const e: Record<string, string> = {};
+    const e: { recipient?: string; content?: string; when?: string } = {};
     if (!recipient) e.recipient = "Choose a recipient";
     if (!content.trim()) e.content = "Write a message";
     let at: Date | null = null;

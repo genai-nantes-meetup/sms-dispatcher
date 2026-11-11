@@ -53,7 +53,7 @@ export function RecipientDialog({ open, onOpenChange, existing, onSaved }: {
   );
 }
 
-export function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }) {
+export function Field({ label, error, children }: { label: string; error?: string | undefined; children: ReactNode }) {
   return (
     <div className="space-y-1.5">
       <Label>{label}</Label>
