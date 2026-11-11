@@ -10,33 +10,44 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicJobsDispatchDueSmsRouteImport } from './routes/api/public/jobs/dispatch-due-sms'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicJobsDispatchDueSmsRoute =
+  ApiPublicJobsDispatchDueSmsRouteImport.update({
+    id: '/api/public/jobs/dispatch-due-sms',
+    path: '/api/public/jobs/dispatch-due-sms',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/public/jobs/dispatch-due-sms': typeof ApiPublicJobsDispatchDueSmsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/public/jobs/dispatch-due-sms': typeof ApiPublicJobsDispatchDueSmsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/public/jobs/dispatch-due-sms': typeof ApiPublicJobsDispatchDueSmsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/api/public/jobs/dispatch-due-sms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/api/public/jobs/dispatch-due-sms'
+  id: '__root__' | '/' | '/api/public/jobs/dispatch-due-sms'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiPublicJobsDispatchDueSmsRoute: typeof ApiPublicJobsDispatchDueSmsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +59,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/dispatch-due-sms': {
+      id: '/api/public/jobs/dispatch-due-sms'
+      path: '/api/public/jobs/dispatch-due-sms'
+      fullPath: '/api/public/jobs/dispatch-due-sms'
+      preLoaderRoute: typeof ApiPublicJobsDispatchDueSmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiPublicJobsDispatchDueSmsRoute: ApiPublicJobsDispatchDueSmsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
