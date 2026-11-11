@@ -14,16 +14,130 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      recipients: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          name: string
+          phone: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          name: string
+          phone: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          name?: string
+          phone?: string
+        }
+        Relationships: []
+      }
+      sms_messages: {
+        Row: {
+          attempts: number
+          brevo_message_id: string | null
+          content: string
+          created_at: string
+          created_by: string
+          error: string | null
+          id: string
+          import_batch_id: string | null
+          phone: string
+          recipient_id: string | null
+          recipient_name: string
+          scheduled_at: string
+          sent_at: string | null
+          source: Database["public"]["Enums"]["sms_source"]
+          status: Database["public"]["Enums"]["sms_status"]
+        }
+        Insert: {
+          attempts?: number
+          brevo_message_id?: string | null
+          content: string
+          created_at?: string
+          created_by?: string
+          error?: string | null
+          id?: string
+          import_batch_id?: string | null
+          phone: string
+          recipient_id?: string | null
+          recipient_name: string
+          scheduled_at?: string
+          sent_at?: string | null
+          source?: Database["public"]["Enums"]["sms_source"]
+          status?: Database["public"]["Enums"]["sms_status"]
+        }
+        Update: {
+          attempts?: number
+          brevo_message_id?: string | null
+          content?: string
+          created_at?: string
+          created_by?: string
+          error?: string | null
+          id?: string
+          import_batch_id?: string | null
+          phone?: string
+          recipient_id?: string | null
+          recipient_name?: string
+          scheduled_at?: string
+          sent_at?: string | null
+          source?: Database["public"]["Enums"]["sms_source"]
+          status?: Database["public"]["Enums"]["sms_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sms_messages_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "recipients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_due_sms: {
+        Args: { _limit?: number }
+        Returns: {
+          attempts: number
+          brevo_message_id: string | null
+          content: string
+          created_at: string
+          created_by: string
+          error: string | null
+          id: string
+          import_batch_id: string | null
+          phone: string
+          recipient_id: string | null
+          recipient_name: string
+          scheduled_at: string
+          sent_at: string | null
+          source: Database["public"]["Enums"]["sms_source"]
+          status: Database["public"]["Enums"]["sms_status"]
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "sms_messages"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      is_allowed_email: { Args: { _email: string }; Returns: boolean }
+      is_allowed_user: { Args: never; Returns: boolean }
+      timeout_stuck_sms: { Args: never; Returns: number }
     }
     Enums: {
-      [_ in never]: never
+      sms_source: "form" | "csv"
+      sms_status: "scheduled" | "sending" | "sent" | "failed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +264,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      sms_source: ["form", "csv"],
+      sms_status: ["scheduled", "sending", "sent", "failed"],
+    },
   },
 } as const
