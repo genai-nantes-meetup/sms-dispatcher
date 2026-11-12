@@ -34,4 +34,4 @@ use the editor.
 - Max 20 SMS per rolling minute (`sentLastMinute`): the dispatcher claims only the remaining budget and "send now" queues when full — provider/carrier rate limit.
 - Domain allowlist is enforced three times: `auth.users` trigger, `is_allowed_user()` in every RLS policy, and `isAllowedEmail` in server functions/route guard — never rely on the UI alone.
 - Scheduled sends go through the `claim_due_sms` SQL function (FOR UPDATE SKIP LOCKED) from `/api/public/jobs/dispatch-due-sms`; stuck `sending` rows are failed, never auto-resent — prevents duplicate SMS.
-- All user-facing times are Europe/Paris via `src/lib/time.ts`; DB stores UTC.
+- All user-facing times use the browser timezone via `getTZ()` in `src/lib/time.ts` (Paris fallback on SSR); DB stores UTC.

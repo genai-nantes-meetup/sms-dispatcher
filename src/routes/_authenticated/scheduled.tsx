@@ -73,7 +73,7 @@ function Scheduled() {
           <div className="hidden overflow-hidden rounded-2xl border bg-card lg:block">
             <table className="w-full text-sm">
               <thead className="bg-muted/60 text-left text-xs uppercase tracking-wide text-muted-foreground">
-                <tr><th className="p-3">When (Paris)</th><th className="p-3">Recipient</th><th className="p-3">Message</th><th className="p-3">Source</th><th className="p-3">Created by</th><th className="p-3"></th></tr>
+                <tr><th className="p-3">When</th><th className="p-3">Recipient</th><th className="p-3">Message</th><th className="p-3">Source</th><th className="p-3">Created by</th><th className="p-3"></th></tr>
               </thead>
               <tbody>
                 {rows.map((m) => (

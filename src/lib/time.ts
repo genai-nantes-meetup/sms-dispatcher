@@ -1,15 +1,19 @@
 import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
-export const TZ = "Europe/Paris";
+/** Browser timezone (falls back to Europe/Paris during SSR). */
+export function getTZ(): string {
+  if (typeof window === "undefined") return "Europe/Paris";
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || "Europe/Paris"; } catch { return "Europe/Paris"; }
+}
 
 export function fmtParis(iso: string | null | undefined, pattern = "dd/MM/yyyy HH:mm") {
-  return iso ? formatInTimeZone(new Date(iso), TZ, pattern) : "—";
+  return iso ? formatInTimeZone(new Date(iso), getTZ(), pattern) : "—";
 }
 /** "YYYY-MM-DDTHH:mm" or "YYYY-MM-DD HH:mm" in Paris → Date (UTC instant) */
 export function parisToDate(local: string): Date {
-  return fromZonedTime(local.replace(" ", "T"), TZ);
+  return fromZonedTime(local.replace(" ", "T"), getTZ());
 }
 export function nowParisInput(offsetMin = 0) {
-  return formatInTimeZone(new Date(Date.now() + offsetMin * 60000), TZ, "yyyy-MM-dd'T'HH:mm");
+  return formatInTimeZone(new Date(Date.now() + offsetMin * 60000), getTZ(), "yyyy-MM-dd'T'HH:mm");
 }
 /** Parse "YYYY-MM-DD HH:mm" or "DD/MM/YYYY HH:mm" (Paris). */
 export function parseCsvDate(s: string): Date | null {

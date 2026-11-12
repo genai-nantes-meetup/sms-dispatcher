@@ -73,7 +73,7 @@ function ImportPage() {
 
   return (
     <div>
-      <PageHeader title="Import CSV" subtitle="Schedule many SMS at once. Times are Europe/Paris." />
+      <PageHeader title="Import CSV" subtitle="Schedule many SMS at once. Times use your browser timezone." />
       <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
         <div className="min-w-0 space-y-4">
           <div
@@ -129,7 +129,7 @@ function ImportPage() {
               <tr><td className="pr-3 font-mono text-xs font-medium">phone</td><td className="text-muted-foreground">French or international number (+33…, 06…, +44…)</td></tr>
               <tr><td className="pr-3 font-mono text-xs font-medium">name</td><td className="text-muted-foreground">Recipient name</td></tr>
               <tr><td className="pr-3 font-mono text-xs font-medium">message</td><td className="text-muted-foreground">SMS text; quote it if it contains commas</td></tr>
-              <tr><td className="pr-3 font-mono text-xs font-medium">send_at</td><td className="text-muted-foreground">YYYY-MM-DD HH:mm or DD/MM/YYYY HH:mm, Paris time, in the future</td></tr>
+              <tr><td className="pr-3 font-mono text-xs font-medium">send_at</td><td className="text-muted-foreground">YYYY-MM-DD HH:mm or DD/MM/YYYY HH:mm, your local time, in the future</td></tr>
             </tbody>
           </table>
           <pre className="overflow-x-auto rounded-lg bg-muted p-3 font-mono text-[11px] leading-relaxed">{DEMO_CSV}</pre>
