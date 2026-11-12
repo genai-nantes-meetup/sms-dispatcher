@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { recipientsQuery, type Recipient } from "@/lib/data";
 import { formatPhone } from "@/lib/phone";
 import { smsStats } from "@/lib/sms-encoding";
-import { nowParisInput, parisToDate, fmtParis } from "@/lib/time";
+import { nowParisInput, parisToDate, fmtParis, getTZ } from "@/lib/time";
 import { sendSmsNow } from "@/lib/sms.functions";
 import { PageHeader } from "@/components/app/common";
 import { RecipientDialog, Field } from "@/components/app/RecipientDialog";
@@ -61,7 +61,7 @@ function NewSms() {
           content: content.trim(), scheduled_at: at!.toISOString(), status: "scheduled", source: "form",
         });
         if (error) throw error;
-        toast.success(`Scheduled for ${fmtParis(at!.toISOString())} (Paris)`); setContent("");
+        toast.success(`Scheduled for ${fmtParis(at!.toISOString())} (${getTZ()})`); setContent("");
       }
       qc.invalidateQueries({ queryKey: ["messages"] });
     } catch (err) {
@@ -71,7 +71,7 @@ function NewSms() {
 
   return (
     <div className="max-w-2xl">
-      <PageHeader title="New SMS" subtitle="Send right away or schedule for later (Paris time)." />
+      <PageHeader title="New SMS" subtitle="Send right away or schedule for later (your local time)." />
       <div className="space-y-5 rounded-2xl border bg-card p-5 lg:p-6">
         <Field label="Recipient" error={errors.recipient}>
           <Popover open={open} onOpenChange={setOpen}>
@@ -126,7 +126,7 @@ function NewSms() {
           {mode === "schedule" && (
             <div className="pt-2">
               <Input type="datetime-local" value={when} min={nowParisInput(1)} onChange={(e) => setWhen(e.target.value)} className="h-11" />
-              <p className="mt-1 text-xs text-muted-foreground">Europe/Paris time</p>
+              <p className="mt-1 text-xs text-muted-foreground">{getTZ()} time</p>
             </div>
           )}
         </Field>
