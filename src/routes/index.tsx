@@ -4,9 +4,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "SMS Dispatcher" },
-      { name: "description", content: "Send and schedule SMS via Brevo." },
+      { name: "description", content: "Send and schedule SMS via httpSMS." },
       { property: "og:title", content: "SMS Dispatcher" },
-      { property: "og:description", content: "Send and schedule SMS via Brevo." },
+      { property: "og:description", content: "Send and schedule SMS via httpSMS." },
     ],
   }),
   beforeLoad: () => {

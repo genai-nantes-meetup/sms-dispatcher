@@ -53,7 +53,7 @@ function NewSms() {
     try {
       if (mode === "now") {
         const r = await send({ data: { recipientId: recipient!.id, name: recipient!.name, phone: recipient!.phone, content } });
-        if (r.ok) { toast.success(`SMS sent to ${recipient!.name}`); setContent(""); }
+        if (r.ok) { toast.success(r.queued ? `Limit of 20 SMS/minute reached — will be sent next minute` : `SMS sent to ${recipient!.name}`); setContent(""); }
         else toast.error(`Sending failed: ${r.error}`);
       } else {
         const { error } = await supabase.from("sms_messages").insert({

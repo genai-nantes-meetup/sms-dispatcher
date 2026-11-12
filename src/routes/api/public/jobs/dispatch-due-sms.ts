@@ -8,13 +8,15 @@ export const Route = createFileRoute("/api/public/jobs/dispatch-due-sms")({
         const authFailure = await authenticateCronRequest(request);
         if (authFailure) return authFailure;
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { sendViaBrevo } = await import("@/lib/brevo.server");
+        const { sendSms, sentLastMinute, MAX_SMS_PER_MINUTE } = await import("@/lib/httpsms.server");
         const timedOut = await supabaseAdmin.rpc("timeout_stuck_sms");
-        const { data: rows, error } = await supabaseAdmin.rpc("claim_due_sms", { _limit: 50 });
+        const budget = MAX_SMS_PER_MINUTE - (await sentLastMinute(supabaseAdmin));
+        if (budget <= 0) return Response.json({ claimed: 0, sent: 0, failed: 0, deferred: true, timedOut: timedOut.data ?? 0 });
+        const { data: rows, error } = await supabaseAdmin.rpc("claim_due_sms", { _limit: budget });
         if (error) return Response.json({ error: error.message }, { status: 500 });
         let sent = 0, failed = 0;
         for (const row of rows ?? []) {
-          const r = await sendViaBrevo(row.phone, row.content);
+          const r = await sendSms(row.phone, row.content);
           if (r.ok) {
             sent++;
             await supabaseAdmin.from("sms_messages").update({
