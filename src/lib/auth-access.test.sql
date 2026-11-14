@@ -1,4 +1,5 @@
--- Database integration regression: every approved address and exact matching.
+-- Read-only database regression: trusted rows, exact matching, and security configuration.
+-- Privileged helpers are deliberately not executable by the read-only inspection role.
 WITH expected(email) AS (VALUES
   ('contact@samuel-berthe.fr'), ('ouvrard.dorian@gmail.com'),
   ('maxime.pitussi@gmail.com'), ('maxime@explorethevault.ai'),
@@ -13,9 +14,11 @@ WITH expected(email) AS (VALUES
 )
 SELECT
   (SELECT count(*) = 7 FROM public.allowed_emails) AS exactly_seven,
-  (SELECT bool_and(private.is_trusted_email(email)) FROM expected) AS all_approved_allowed,
-  (SELECT bool_and(NOT private.is_trusted_email(email)) FROM blocked) AS all_unlisted_blocked,
-  private.is_trusted_email('CONTACT@SAMUEL-BERTHE.FR') AS case_insensitive,
+  (SELECT bool_and(EXISTS (SELECT 1 FROM public.allowed_emails a WHERE a.email = lower(e.email))) FROM expected e) AS all_approved_allowed,
+  (SELECT bool_and(NOT EXISTS (SELECT 1 FROM public.allowed_emails a WHERE a.email = lower(b.email))) FROM blocked b) AS all_unlisted_blocked,
+  EXISTS (SELECT 1 FROM public.allowed_emails WHERE email = lower('CONTACT@SAMUEL-BERTHE.FR')) AS case_insensitive,
+  (SELECT prosecdef AND provolatile = 's' AND prosrc LIKE '%WHERE email = lower(_email)%'
+   FROM pg_proc WHERE oid = 'private.is_trusted_email(text)'::regprocedure) AS live_helper_uses_exact_match,
   NOT has_table_privilege('authenticated', 'public.allowed_emails', 'INSERT') AS no_self_grant,
   NOT has_table_privilege('authenticated', 'public.allowed_emails', 'SELECT') AS list_private,
   NOT has_table_privilege('anon', 'public.allowed_emails', 'SELECT') AS no_public_list,
