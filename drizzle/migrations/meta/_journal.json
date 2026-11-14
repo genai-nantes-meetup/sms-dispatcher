@@ -15,6 +15,13 @@
       "when": 1794423371743,
       "tag": "0001_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794655645944,
+      "tag": "0002_create_trusted_email_list",
+      "breakpoints": true
     }
   ]
 }
