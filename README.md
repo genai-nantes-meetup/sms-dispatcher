@@ -2,7 +2,7 @@
 
 A frontend for a SMS gateway (via [HTTPSMS](https://httpsms.com)).
 
-Used in our events to send notifications to speakers or VIPs, 15 minutes before their talk, meeting, etc.
+Used during [GenAI Days Nantes](https://genai-days-nantes.com/) to send notifications to speakers or VIPs, 15 minutes before their talk, meeting, etc.
 
 Built with [Lovable](https://lovable.dev).
 
