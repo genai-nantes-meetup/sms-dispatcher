@@ -29,6 +29,13 @@
       "when": 1794655682794,
       "tag": "0003_enforce_database_email_access",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794655800708,
+      "tag": "0004_lock_trusted_list_permissions",
+      "breakpoints": true
     }
   ]
 }
