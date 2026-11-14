@@ -13,7 +13,7 @@ Built with [Lovable](https://lovable.dev).
 - Scheduling
 - CSV import
 - Rate-limit: send 30 SMS per minute to prevent ban
-- Auth limited to a trusted list of emails
+- Auth limited to trusted emails
 
 ## Development
 
