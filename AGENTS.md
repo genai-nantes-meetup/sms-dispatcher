@@ -32,6 +32,7 @@ use the editor.
 ## Project rules
 - SMS provider (httpSMS) calls live only in `src/lib/httpsms.server.ts`, imported dynamically inside server handlers — keeps the API key off the browser.
 - Max 20 SMS per rolling minute (`sentLastMinute`): the dispatcher claims only the remaining budget and "send now" queues when full — provider/carrier rate limit.
-- Domain allowlist is enforced three times: `auth.users` trigger, `is_allowed_user()` in every RLS policy, and `isAllowedEmail` in server functions/route guard — never rely on the UI alone.
+- Exact-email access uses `public.allowed_emails` as the sole source of truth, enforced by the signup trigger, RLS, and `isAllowedUser` in the page guard and SMS handler — prevents domain-wide access and stale client lists.
+- Allowlist rows are service-role-only; the private security-definer helper serves the signup trigger, while the public RPC checks only the caller's verified JWT email — prevents self-granted access and email-list enumeration.
 - Scheduled sends go through the `claim_due_sms` SQL function (FOR UPDATE SKIP LOCKED) from `/api/public/jobs/dispatch-due-sms`; stuck `sending` rows are failed, never auto-resent — prevents duplicate SMS.
 - All user-facing times use the browser timezone via `getTZ()` in `src/lib/time.ts` (Paris fallback on SSR); DB stores UTC.

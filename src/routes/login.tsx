@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { MessageSquareText } from "lucide-react";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
-import { isAllowedEmail, RESTRICTED_MSG } from "@/lib/auth-domain";
+import { isAllowedUser, RESTRICTED_MSG } from "@/lib/auth-domain";
 
 export const Route = createFileRoute("/login")({
   ssr: false,
@@ -11,9 +11,11 @@ export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
       { title: "Sign in · SMS Dispatcher" },
-      { name: "description", content: "Sign in with your company Google account." },
+      { name: "description", content: "Sign in to SMS Dispatcher with an approved Google account." },
       { property: "og:title", content: "Sign in · SMS Dispatcher" },
-      { property: "og:description", content: "Sign in with your company Google account." },
+      { property: "og:description", content: "Sign in to SMS Dispatcher with an approved Google account." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Login,
@@ -33,11 +35,15 @@ function Login() {
     const check = async () => {
       const { data } = await supabase.auth.getUser();
       if (!data.user) return;
-      if (isAllowedEmail(data.user.email)) navigate({ to: "/new", replace: true });
-      else { await supabase.auth.signOut(); setError(RESTRICTED_MSG); }
+      try {
+        if (await isAllowedUser(supabase)) navigate({ to: "/new", replace: true });
+        else { await supabase.auth.signOut(); setError(RESTRICTED_MSG); }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Could not verify access. Please try again.");
+      }
     };
     check();
-    const { data: sub } = supabase.auth.onAuthStateChange((e) => { if (e === "SIGNED_IN") check(); });
+    const { data: sub } = supabase.auth.onAuthStateChange((e) => { if (e === "SIGNED_IN") setTimeout(() => { void check(); }, 0); });
     return () => sub.subscription.unsubscribe();
   }, [navigate]);
 
@@ -57,7 +63,7 @@ function Login() {
           <MessageSquareText className="h-6 w-6" />
         </div>
         <h1 className="text-2xl font-bold tracking-tight">SMS Dispatcher</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Internal tool. Sign in with your company Google account.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Internal tool. Sign in with your approved Google account.</p>
         {error && <p role="alert" className="mt-4 rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</p>}
         <button
           onClick={signIn}
