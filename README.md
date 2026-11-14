@@ -25,3 +25,14 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## Full Setup Guide
+
+See **[SETUP.md](SETUP.md)** for complete instructions on:
+- Creating a new Supabase project
+- Running database migrations
+- Configuring httpSMS provider
+- Setting environment variables (local + production)
+- Deploying the cron job (Vercel, GitHub Actions, external schedulers)
+- Verifying end-to-end
+- Rate limits & troubleshooting
