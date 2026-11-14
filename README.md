@@ -15,6 +15,8 @@ Built with [Lovable](https://lovable.dev).
 - Rate-limit: send 30 SMS per minute to prevent ban
 - Auth limited to trusted emails
 
+<img width="1016" height="721" alt="image" src="https://github.com/user-attachments/assets/ac273bbf-a359-4df5-8c14-c7bf043d9e88" />
+
 ## Development
 
 Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
