@@ -1,18 +1,18 @@
 # SMS Dispatcher
 
-Implement exactly the screenshot and nothing else
+A frontend for a SMS gateway (via [HTTPSMS](https://httpsms.com)).
 
-This project was built with [Lovable](https://lovable.dev).
+Used in our events to send notifications to speakers or VIPs, 15 minutes before their talk, meeting, etc.
+
+Built with [Lovable](https://lovable.dev).
 
 **Live app**: https://sms-dispatcher.lovable.app
 
-## Build with Lovable
+## Features
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/abd66fad-3e29-45f8-9346-9a4d2d0a32e3).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+- Scheduling
+- CSV import
+- Rate-limit: send 30 SMS per minute to prevent ban
 
 ## Development
 
