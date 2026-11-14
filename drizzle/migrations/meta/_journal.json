@@ -22,6 +22,13 @@
       "when": 1794655645944,
       "tag": "0002_create_trusted_email_list",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794655682794,
+      "tag": "0003_enforce_database_email_access",
+      "breakpoints": true
     }
   ]
 }
