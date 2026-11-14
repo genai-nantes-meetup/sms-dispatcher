@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authenticated/scheduled")({
-  head: () => ({ meta: [{ title: "Scheduled · SMS Dispatcher" }, { name: "description", content: "Upcoming scheduled SMS." }, { property: "og:title", content: "Scheduled · SMS Dispatcher" }, { property: "og:description", content: "Upcoming scheduled SMS." }] }),
+  head: () => ({ meta: [{ title: "Scheduled · SMS Dispatcher" }, { name: "description", content: "Upcoming scheduled SMS." }, { property: "og:title", content: "Scheduled · SMS Dispatcher" }, { property: "og:description", content: "Upcoming scheduled SMS." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Scheduled,
 });
 

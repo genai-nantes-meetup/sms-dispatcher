@@ -14,7 +14,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export const Route = createFileRoute("/_authenticated/history")({
-  head: () => ({ meta: [{ title: "History · SMS Dispatcher" }, { name: "description", content: "Sent and failed SMS." }, { property: "og:title", content: "History · SMS Dispatcher" }, { property: "og:description", content: "Sent and failed SMS." }] }),
+  head: () => ({ meta: [{ title: "History · SMS Dispatcher" }, { name: "description", content: "Sent and failed SMS." }, { property: "og:title", content: "History · SMS Dispatcher" }, { property: "og:description", content: "Sent and failed SMS." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: History,
 });
 

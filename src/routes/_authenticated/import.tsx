@@ -11,7 +11,7 @@ import { PageHeader } from "@/components/app/common";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/import")({
-  head: () => ({ meta: [{ title: "Import CSV · SMS Dispatcher" }, { name: "description", content: "Schedule SMS in bulk from a CSV file." }, { property: "og:title", content: "Import CSV · SMS Dispatcher" }, { property: "og:description", content: "Schedule SMS in bulk from a CSV file." }] }),
+  head: () => ({ meta: [{ title: "Import CSV · SMS Dispatcher" }, { name: "description", content: "Schedule SMS in bulk from a CSV file." }, { property: "og:title", content: "Import CSV · SMS Dispatcher" }, { property: "og:description", content: "Schedule SMS in bulk from a CSV file." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: ImportPage,
 });
 
