@@ -20,7 +20,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export const Route = createFileRoute("/_authenticated/new")({
-  head: () => ({ meta: [{ title: "New SMS · SMS Dispatcher" }, { name: "description", content: "Send or schedule an SMS." }, { property: "og:title", content: "New SMS · SMS Dispatcher" }, { property: "og:description", content: "Send or schedule an SMS." }] }),
+  head: () => ({ meta: [{ title: "New SMS · SMS Dispatcher" }, { name: "description", content: "Send or schedule an SMS." }, { property: "og:title", content: "New SMS · SMS Dispatcher" }, { property: "og:description", content: "Send or schedule an SMS." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: NewSms,
 });
 

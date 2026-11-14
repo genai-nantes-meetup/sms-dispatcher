@@ -7,6 +7,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Send and schedule SMS via httpSMS." },
       { property: "og:title", content: "SMS Dispatcher" },
       { property: "og:description", content: "Send and schedule SMS via httpSMS." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   beforeLoad: () => {

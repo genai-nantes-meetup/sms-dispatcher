@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authenticated/recipients")({
-  head: () => ({ meta: [{ title: "Recipients · SMS Dispatcher" }, { name: "description", content: "Saved SMS recipients." }, { property: "og:title", content: "Recipients · SMS Dispatcher" }, { property: "og:description", content: "Saved SMS recipients." }] }),
+  head: () => ({ meta: [{ title: "Recipients · SMS Dispatcher" }, { name: "description", content: "Saved SMS recipients." }, { property: "og:title", content: "Recipients · SMS Dispatcher" }, { property: "og:description", content: "Saved SMS recipients." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
   component: Recipients,
 });
 

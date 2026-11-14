@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import { parseSmsCsv, DEMO_CSV } from "./csv";
 import { normalizePhone } from "./phone";
 import { smsStats } from "./sms-encoding";
-import { isAllowedEmail } from "./auth-domain";
 
 const NOW = new Date("2026-11-11T12:00:00Z");
 
@@ -43,11 +42,3 @@ describe("segments", () => {
   });
 });
 
-describe("domains", () => {
-  it("allows exact domains only", () => {
-    expect(isAllowedEmail("A@Samuel-Berthe.fr")).toBe(true);
-    expect(isAllowedEmail("x@explorethevault.ai")).toBe(true);
-    expect(isAllowedEmail("x@mail.samuel-berthe.fr")).toBe(false);
-    expect(isAllowedEmail("x@evil-samuel-berthe.fr")).toBe(false);
-  });
-});

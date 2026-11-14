@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { isAllowedEmail, RESTRICTED_MSG } from "./auth-domain";
+import { isAllowedUser, RESTRICTED_MSG } from "./auth-domain";
 import { normalizePhone } from "./phone";
 
 export const sendSmsNow = createServerFn({ method: "POST" })
@@ -14,14 +14,14 @@ export const sendSmsNow = createServerFn({ method: "POST" })
   })
   .handler(async ({ data, context }) => {
     const email = (context.claims as { email?: string }).email;
-    if (!isAllowedEmail(email)) throw new Error(RESTRICTED_MSG);
+    if (!email || !(await isAllowedUser(context.supabase))) throw new Error(RESTRICTED_MSG);
     const { supabase } = context;
     const { sendSms, sentLastMinute, MAX_SMS_PER_MINUTE } = await import("./httpsms.server");
     if ((await sentLastMinute(supabase)) >= MAX_SMS_PER_MINUTE) {
       const { error } = await supabase.from("sms_messages").insert({
         recipient_id: data.recipientId, recipient_name: data.name, phone: data.phone,
         content: data.content, scheduled_at: new Date().toISOString(), status: "scheduled",
-        source: "form", created_by: email!,
+        source: "form", created_by: email,
       });
       if (error) throw new Error(error.message);
       return { ok: true, queued: true, error: null };
@@ -31,7 +31,7 @@ export const sendSmsNow = createServerFn({ method: "POST" })
       .insert({
         recipient_id: data.recipientId, recipient_name: data.name, phone: data.phone,
         content: data.content, scheduled_at: new Date().toISOString(), status: "sending",
-        source: "form", attempts: 1, claimed_at: new Date().toISOString(), created_by: email!,
+        source: "form", attempts: 1, claimed_at: new Date().toISOString(), created_by: email,
       })
       .select("id")
       .single();
