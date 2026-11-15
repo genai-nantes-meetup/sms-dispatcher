@@ -13,14 +13,14 @@ export function RecipientDialog({ open, onOpenChange, existing, onSaved }: {
   open: boolean; onOpenChange: (o: boolean) => void; existing?: Recipient | null; onSaved?: (r: Recipient) => void;
 }) {
   const qc = useQueryClient();
-  const [name, setName] = useState(""); const [phone, setPhone] = useState("");
+  const [first, setFirst] = useState(""); const [last, setLast] = useState(""); const [phone, setPhone] = useState("");
   const [err, setErr] = useState<{ name?: string; phone?: string }>({}); const [busy, setBusy] = useState(false);
-  useEffect(() => { if (open) { setName(existing?.name ?? ""); setPhone(existing?.phone ?? ""); setErr({}); } }, [open, existing]);
+  useEffect(() => { if (open) { setFirst(existing?.first_name ?? ""); setLast(existing?.last_name ?? ""); setPhone(existing?.phone ?? ""); setErr({}); } }, [open, existing]);
 
   const save = async () => {
     const e: typeof err = {};
     const p = normalizePhone(phone);
-    if (!name.trim()) e.name = "Name is required";
+    if (!first.trim()) e.name = "First name is required";
     if (!p) e.phone = "Invalid phone number";
     if (p) {
       const { data: dup } = await supabase.from("recipients").select("id,name").eq("phone", p).maybeSingle();
@@ -29,8 +29,8 @@ export function RecipientDialog({ open, onOpenChange, existing, onSaved }: {
     setErr(e); if (Object.keys(e).length) return;
     setBusy(true);
     const q = existing
-      ? supabase.from("recipients").update({ name: name.trim(), phone: p! }).eq("id", existing.id).select().single()
-      : supabase.from("recipients").insert({ name: name.trim(), phone: p! }).select().single();
+      ? supabase.from("recipients").update({ first_name: first.trim(), last_name: last.trim(), phone: p! }).eq("id", existing.id).select().single()
+      : supabase.from("recipients").insert({ first_name: first.trim(), last_name: last.trim(), phone: p! }).select().single();
     const { data, error } = await q;
     setBusy(false);
     if (error) { toast.error(error.message); return; }
@@ -44,7 +44,10 @@ export function RecipientDialog({ open, onOpenChange, existing, onSaved }: {
       <DialogContent>
         <DialogHeader><DialogTitle>{existing ? "Edit recipient" : "New recipient"}</DialogTitle></DialogHeader>
         <div className="space-y-4">
-          <Field label="Name" error={err.name}><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Alice Martin" /></Field>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="First name" error={err.name}><Input value={first} onChange={(e) => setFirst(e.target.value)} placeholder="Alice" /></Field>
+            <Field label="Last name"><Input value={last} onChange={(e) => setLast(e.target.value)} placeholder="Martin" /></Field>
+          </div>
           <Field label="Phone" error={err.phone}><Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="06 12 34 56 78" inputMode="tel" /></Field>
         </div>
         <DialogFooter><Button onClick={save} disabled={busy}>{busy ? "Saving…" : "Save"}</Button></DialogFooter>

@@ -9,6 +9,7 @@ import { recipientsQuery, type Recipient } from "@/lib/data";
 import { formatPhone } from "@/lib/phone";
 import { smsStats } from "@/lib/sms-encoding";
 import { nowParisInput, parisToDate, fmtParis, getTZ } from "@/lib/time";
+import { fillTemplate, TEMPLATE_VARIABLES } from "@/lib/template";
 import { sendSmsNow } from "@/lib/sms.functions";
 import { PageHeader } from "@/components/app/common";
 import { RecipientDialog, Field } from "@/components/app/RecipientDialog";
@@ -50,15 +51,16 @@ function NewSms() {
     }
     setErrors(e); if (Object.keys(e).length) return;
     setBusy(true);
+    const text = fillTemplate(content, recipient!);
     try {
       if (mode === "now") {
-        const r = await send({ data: { recipientId: recipient!.id, name: recipient!.name, phone: recipient!.phone, content } });
+        const r = await send({ data: { recipientId: recipient!.id, name: recipient!.name, phone: recipient!.phone, content: text } });
         if (r.ok) { toast.success(r.queued ? `Limit of 20 SMS/minute reached — will be sent next minute` : `SMS sent to ${recipient!.name}`); setContent(""); }
         else toast.error(`Sending failed: ${r.error}`);
       } else {
         const { error } = await supabase.from("sms_messages").insert({
           recipient_id: recipient!.id, recipient_name: recipient!.name, phone: recipient!.phone,
-          content: content.trim(), scheduled_at: at!.toISOString(), status: "scheduled", source: "form",
+          content: text.trim(), scheduled_at: at!.toISOString(), status: "scheduled", source: "form",
         });
         if (error) throw error;
         toast.success(`Scheduled for ${fmtParis(at!.toISOString())} (${getTZ()})`); setContent("");
@@ -113,6 +115,16 @@ function NewSms() {
             <span>{stats.chars} chars</span><span>{stats.encoding}</span>
             <span>{stats.segments} segment{stats.segments === 1 ? "" : "s"}</span>
           </div>
+          <div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+            <span>Variables:</span>
+            {TEMPLATE_VARIABLES.map((v) => (
+              <button key={v.key} type="button" title={v.label} onClick={() => setContent((c) => c + v.key)}
+                className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-foreground hover:bg-accent">{v.key}</button>
+            ))}
+          </div>
+          {recipient && /\$(firstname|lastname|fullname)/i.test(content) && (
+            <p className="text-xs text-muted-foreground">Preview: <span className="text-foreground">{fillTemplate(content, recipient)}</span></p>
+          )}
           {stats.segments > 3 && (
             <p className="flex items-center gap-1.5 text-xs font-medium text-warning"><AlertTriangle className="h-3.5 w-3.5" /> Long message: {stats.segments} segments will be billed.</p>
           )}
