@@ -33,21 +33,27 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string
+          first_name: string
           id: string
+          last_name: string
           name: string
           phone: string
         }
         Insert: {
           created_at?: string
           created_by?: string
+          first_name?: string
           id?: string
-          name: string
+          last_name?: string
+          name?: string
           phone: string
         }
         Update: {
           created_at?: string
           created_by?: string
+          first_name?: string
           id?: string
+          last_name?: string
           name?: string
           phone?: string
         }

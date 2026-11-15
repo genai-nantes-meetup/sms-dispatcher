@@ -36,6 +36,13 @@
       "when": 1794655800708,
       "tag": "0004_lock_trusted_list_permissions",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794767562165,
+      "tag": "0005_recipient_first_last_name",
+      "breakpoints": true
     }
   ]
 }
