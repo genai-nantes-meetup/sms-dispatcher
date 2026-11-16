@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Copy, Download, FileUp, AlertTriangle } from "lucide-react";
+import { Copy, Download, FileUp, AlertTriangle, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DEMO_CSV, parseSmsCsv, type CsvRow } from "@/lib/csv";
 import { fillTemplate } from "@/lib/template";
@@ -136,7 +136,7 @@ function ImportPage() {
           </table>
           <pre className="overflow-x-auto rounded-lg bg-muted p-3 font-mono text-[11px] leading-relaxed">{DEMO_CSV}</pre>
           <p className="flex gap-2 text-sm text-muted-foreground">
-            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             <span>The last row is a multi-line SMS: the cell is wrapped in quotes, so you can press Enter inside it to start a new line.</span>
           </p>
           <div className="flex gap-2">
