@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseSmsCsv, DEMO_CSV } from "./csv";
+import { parseSmsCsv, parseRecipientsCsv, DEMO_CSV, RECIPIENTS_DEMO_CSV } from "./csv";
 import { normalizePhone } from "./phone";
 import { smsStats } from "./sms-encoding";
 
@@ -50,6 +50,26 @@ describe("csv import", () => {
     const { rows } = parseSmsCsv("phone,firstname,lastname,message,send_at\n123,X,Y,Hi,2020-01-01 10:00\n", NOW);
     expect(rows[0]!.errors).toContain("Invalid phone");
     expect(rows[0]!.errors).toContain("send_at is in the past");
+  });
+});
+
+describe("recipients csv import", () => {
+  it("demo CSV gives 4 valid rows", () => {
+    const { rows, headerError } = parseRecipientsCsv(RECIPIENTS_DEMO_CSV);
+    expect(headerError).toBeNull();
+    expect(rows).toHaveLength(4);
+    expect(rows.every((r) => r.errors.length === 0)).toBe(true);
+    expect(rows[3]!.phone).toBe("+447700900004");
+  });
+  it("requires phone, firstname and lastname columns", () => {
+    const { headerError } = parseRecipientsCsv("phone,firstname\n0600000001,Alice\n");
+    expect(headerError).toBe("Missing column(s): lastname");
+  });
+  it("flags invalid phone and duplicate phones in the file", () => {
+    const { rows } = parseRecipientsCsv("phone,firstname,lastname\n123,X,Y\n0612345678,A,B\n06 12 34 56 78,A2,B2\n");
+    expect(rows[0]!.errors).toContain("Invalid phone");
+    expect(rows[1]!.errors).toEqual([]);
+    expect(rows[2]!.errors).toContain("Duplicate phone in file");
   });
 });
 

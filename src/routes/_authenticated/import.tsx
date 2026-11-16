@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Copy, Download, FileUp, AlertTriangle, Info } from "lucide-react";
+import { Copy, Download, FileUp, AlertTriangle, Info, UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { DEMO_CSV, parseSmsCsv, type CsvRow } from "@/lib/csv";
+import { DEMO_CSV, RECIPIENTS_DEMO_CSV, parseSmsCsv, parseRecipientsCsv, type CsvRow, type RecipientCsvRow } from "@/lib/csv";
 import { fillTemplate } from "@/lib/template";
 import { formatPhone } from "@/lib/phone";
 import { fmtParis } from "@/lib/time";
@@ -16,10 +16,41 @@ export const Route = createFileRoute("/_authenticated/import")({
   component: ImportPage,
 });
 
-function ImportPage() {
-  const qc = useQueryClient();
+function DropZone({ file, onFile }: { file: string | null; onFile: (f: File) => void }) {
   const input = useRef<HTMLInputElement>(null);
   const [drag, setDrag] = useState(false);
+  return (
+    <div
+      onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)}
+      onDrop={(e) => { e.preventDefault(); setDrag(false); const f = e.dataTransfer.files[0]; if (f) onFile(f); }}
+      onClick={() => input.current?.click()}
+      className={`flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed p-10 text-center transition-colors ${drag ? "border-primary bg-accent" : "bg-card hover:border-primary/50"}`}
+    >
+      <FileUp className="mb-3 h-8 w-8 text-primary" />
+      <p className="font-semibold">{file ?? "Drop a CSV file here"}</p>
+      <p className="text-sm text-muted-foreground">or click to choose a file (comma or semicolon)</p>
+      <input ref={input} type="file" accept=".csv,text/csv" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onFile(f); e.target.value = ""; }} />
+    </div>
+  );
+}
+
+function DemoButtons({ csv, filename }: { csv: string; filename: string }) {
+  const copyDemo = async () => { await navigator.clipboard.writeText(csv); toast.success("Demo CSV copied"); };
+  const downloadDemo = () => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    a.download = filename; a.click(); URL.revokeObjectURL(a.href);
+  };
+  return (
+    <div className="flex gap-2">
+      <Button variant="outline" size="sm" onClick={copyDemo}><Copy /> Copy</Button>
+      <Button variant="outline" size="sm" onClick={downloadDemo}><Download /> Download {filename}</Button>
+    </div>
+  );
+}
+
+function ImportPage() {
+  const qc = useQueryClient();
   const [file, setFile] = useState<string | null>(null);
   const [rows, setRows] = useState<CsvRow[]>([]);
   const [headerError, setHeaderError] = useState<string | null>(null);
@@ -65,29 +96,12 @@ function ImportPage() {
     } finally { setBusy(false); }
   };
 
-  const copyDemo = async () => { await navigator.clipboard.writeText(DEMO_CSV); toast.success("Demo CSV copied"); };
-  const downloadDemo = () => {
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([DEMO_CSV], { type: "text/csv;charset=utf-8" }));
-    a.download = "demo.csv"; a.click(); URL.revokeObjectURL(a.href);
-  };
-
   return (
     <div>
       <PageHeader title="Import CSV" subtitle="Schedule many SMS at once. Times use your browser timezone." />
       <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
         <div className="min-w-0 space-y-4">
-          <div
-            onDragOver={(e) => { e.preventDefault(); setDrag(true); }} onDragLeave={() => setDrag(false)}
-            onDrop={(e) => { e.preventDefault(); setDrag(false); const f = e.dataTransfer.files[0]; if (f) load(f); }}
-            onClick={() => input.current?.click()}
-            className={`flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed p-10 text-center transition-colors ${drag ? "border-primary bg-accent" : "bg-card hover:border-primary/50"}`}
-          >
-            <FileUp className="mb-3 h-8 w-8 text-primary" />
-            <p className="font-semibold">{file ?? "Drop a CSV file here"}</p>
-            <p className="text-sm text-muted-foreground">or click to choose a file (comma or semicolon)</p>
-            <input ref={input} type="file" accept=".csv,text/csv" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) load(f); e.target.value = ""; }} />
-          </div>
+          <DropZone file={file} onFile={load} />
           {headerError && <p className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{headerError}</p>}
           {warnings.length > 0 && (
             <div className="space-y-1 rounded-lg bg-warning/15 p-3 text-sm">
@@ -139,12 +153,108 @@ function ImportPage() {
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
             <span>Two ways to write a multi-line SMS: press Enter inside the quotes (the Eve row), or write \n where you want a line break (the Franck row).</span>
           </p>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={copyDemo}><Copy /> Copy</Button>
-            <Button variant="outline" size="sm" onClick={downloadDemo}><Download /> Download demo.csv</Button>
-          </div>
+          <DemoButtons csv={DEMO_CSV} filename="demo.csv" />
         </aside>
       </div>
+
+      <RecipientsImport />
     </div>
+  );
+}
+
+function RecipientsImport() {
+  const qc = useQueryClient();
+  const [file, setFile] = useState<string | null>(null);
+  const [rows, setRows] = useState<RecipientCsvRow[]>([]);
+  const [headerError, setHeaderError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const valid = rows.filter((r) => r.errors.length === 0);
+
+  const load = async (f: File) => {
+    const text = await f.text();
+    const r = parseRecipientsCsv(text);
+    setFile(f.name); setRows(r.rows); setHeaderError(r.headerError);
+  };
+
+  const doImport = async () => {
+    setBusy(true);
+    try {
+      // One recipient per phone: first occurrence in the file wins.
+      const byPhone = new Map<string, RecipientCsvRow>();
+      for (const r of valid) if (!byPhone.has(r.phone!)) byPhone.set(r.phone!, r);
+      const phones = [...byPhone.keys()];
+      const { data: existing, error: e1 } = await supabase.from("recipients").select("phone").in("phone", phones);
+      if (e1) throw e1;
+      const existingPhones = new Set(existing.map((r) => r.phone));
+      const toCreate = phones
+        .filter((p) => !existingPhones.has(p))
+        .map((p) => { const v = byPhone.get(p)!; return { phone: p, first_name: v.firstName, last_name: v.lastName }; });
+      if (toCreate.length) {
+        const { error: e2 } = await supabase.from("recipients").insert(toCreate);
+        if (e2) throw e2;
+      }
+      toast.success(`${toCreate.length} recipient${toCreate.length === 1 ? "" : "s"} added, ${existingPhones.size} already existed`);
+      setRows([]); setFile(null);
+      qc.invalidateQueries({ queryKey: ["recipients"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Import failed");
+    } finally { setBusy(false); }
+  };
+
+  return (
+    <section className="mt-10 space-y-4 border-t pt-8">
+      <div>
+        <h2 className="flex items-center gap-2 text-lg font-semibold"><UserPlus className="h-5 w-5 text-primary" /> Import recipients only</h2>
+        <p className="text-sm text-muted-foreground">Add people to your recipient list without scheduling any SMS.</p>
+      </div>
+      <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
+        <div className="min-w-0 space-y-4">
+          <DropZone file={file} onFile={load} />
+          {headerError && <p className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{headerError}</p>}
+          {rows.length > 0 && (
+            <>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-sm"><b>{valid.length}</b> valid · <b className="text-destructive">{rows.length - valid.length}</b> invalid</p>
+                <Button onClick={doImport} disabled={busy || valid.length === 0}>{busy ? "Importing…" : `Import ${valid.length} recipients`}</Button>
+              </div>
+              <div className="overflow-x-auto rounded-2xl border bg-card">
+                <table className="w-full min-w-[480px] text-sm">
+                  <thead className="bg-muted/60 text-left text-xs uppercase tracking-wide text-muted-foreground">
+                    <tr><th className="p-3">#</th><th className="p-3">Phone</th><th className="p-3">First name</th><th className="p-3">Last name</th><th className="p-3">Status</th></tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((r) => (
+                      <tr key={r.line} className={`border-t align-top ${r.errors.length ? "bg-destructive/10" : ""}`}>
+                        <td className="p-3 text-muted-foreground">{r.line}</td>
+                        <td className="whitespace-nowrap p-3">{r.phone ? formatPhone(r.phone) : r.raw["phone"]}</td>
+                        <td className="p-3">{r.firstName}</td><td className="p-3">{r.lastName}</td>
+                        <td className="p-3">{r.errors.length ? <span className="text-xs font-medium text-destructive">{r.errors.join(", ")}</span> : <span className="text-xs font-medium text-success">OK</span>}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
+        </div>
+
+        <aside className="h-fit min-w-0 space-y-4 rounded-2xl border bg-card p-5">
+          <h2 className="font-semibold">CSV format</h2>
+          <table className="w-full text-sm">
+            <tbody className="[&_td]:py-1.5 [&_td]:align-top">
+              <tr><td className="pr-3 font-mono text-xs font-medium">phone</td><td className="text-muted-foreground">French or international number (+33…, 06…, +44…)</td></tr>
+              <tr><td className="pr-3 font-mono text-xs font-medium">firstname</td><td className="text-muted-foreground">Recipient first name</td></tr>
+              <tr><td className="pr-3 font-mono text-xs font-medium">lastname</td><td className="text-muted-foreground">Recipient last name</td></tr>
+            </tbody>
+          </table>
+          <pre className="overflow-x-auto rounded-lg bg-muted p-3 font-mono text-[11px] leading-relaxed">{RECIPIENTS_DEMO_CSV}</pre>
+          <p className="flex gap-2 text-sm text-muted-foreground">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <span>Numbers that already exist in your recipient list are skipped, never duplicated.</span>
+          </p>
+          <DemoButtons csv={RECIPIENTS_DEMO_CSV} filename="recipients-demo.csv" />
+        </aside>
+      </div>
+    </section>
   );
 }
