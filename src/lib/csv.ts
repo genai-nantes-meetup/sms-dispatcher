@@ -12,12 +12,22 @@ your pass is ready:
 - gate B12
 - time 09:30
 See you there!",2026-12-03 08:00
++33600000006,Franck,Petit,"Hi $firstname, your seat is confirmed.\\nGate: B12\\nTime: 09:30",2026-12-04 11:00
 `;
 
 export type CsvRow = {
   line: number; raw: Record<string, string>;
   phone: string | null; firstName: string; lastName: string; name: string; message: string; sendAt: Date | null; errors: string[];
 };
+
+/**
+ * A message cell can carry line breaks two ways: real ones inside a quoted cell
+ * (what Excel/Sheets write when you press Alt+Enter), or the \n escape sequence.
+ * Both become real line breaks before sending.
+ */
+export function normalizeMessageBreaks(text: string): string {
+  return text.replace(/\\r\\n|\\r|\\n/g, "\n");
+}
 
 /**
  * 1-based file line where each CSV record starts.
@@ -57,7 +67,7 @@ export function parseSmsCsv(text: string, now = new Date()): { rows: CsvRow[]; h
     const firstName = (raw["firstname"] ?? "").trim(); if (!firstName) errors.push("First name is empty");
     const lastName = (raw["lastname"] ?? "").trim();
     const name = `${firstName} ${lastName}`.trim();
-    const message = (raw["message"] ?? "").trim(); if (!message) errors.push("Message is empty");
+    const message = normalizeMessageBreaks((raw["message"] ?? "").trim()); if (!message) errors.push("Message is empty");
     const sendAt = parseCsvDate(raw["send_at"] ?? "");
     if (!sendAt) errors.push("Invalid send_at");
     else if (sendAt.getTime() <= now.getTime()) errors.push("send_at is in the past");
