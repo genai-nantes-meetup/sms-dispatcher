@@ -53,6 +53,26 @@ describe("csv import", () => {
   });
 });
 
+describe("recipients csv import", () => {
+  it("demo CSV gives 4 valid rows", () => {
+    const { rows, headerError } = parseRecipientsCsv(RECIPIENTS_DEMO_CSV);
+    expect(headerError).toBeNull();
+    expect(rows).toHaveLength(4);
+    expect(rows.every((r) => r.errors.length === 0)).toBe(true);
+    expect(rows[3]!.phone).toBe("+447700900004");
+  });
+  it("requires phone, firstname and lastname columns", () => {
+    const { headerError } = parseRecipientsCsv("phone,firstname\n0600000001,Alice\n");
+    expect(headerError).toBe("Missing column(s): lastname");
+  });
+  it("flags invalid phone and duplicate phones in the file", () => {
+    const { rows } = parseRecipientsCsv("phone,firstname,lastname\n123,X,Y\n0612345678,A,B\n06 12 34 56 78,A2,B2\n");
+    expect(rows[0]!.errors).toContain("Invalid phone");
+    expect(rows[1]!.errors).toEqual([]);
+    expect(rows[2]!.errors).toContain("Duplicate phone in file");
+  });
+});
+
 describe("phones", () => {
   it.each(["06 12 34 56 78", "0612345678", "33612345678", "+33612345678"])("%s → +33612345678", (p) => {
     expect(normalizePhone(p)).toBe("+33612345678");
