@@ -46,6 +46,46 @@ export function recordStartLines(text: string): number[] {
   return out;
 }
 
+export const RECIPIENTS_DEMO_CSV = `phone,firstname,lastname
++33600000001,Alice,Martin
+0600000002,Bruno,Leroy
++33 6 00 00 00 03,Chloé,Dubois
++447700900004,David,Smith
+`;
+
+export type RecipientCsvRow = {
+  line: number; raw: Record<string, string>;
+  phone: string | null; firstName: string; lastName: string; errors: string[];
+};
+
+/** Recipients-only import: phone, firstname, lastname — no message, no date. */
+export function parseRecipientsCsv(text: string): { rows: RecipientCsvRow[]; headerError: string | null } {
+  const clean = text.replace(/^\uFEFF/, "");
+  const firstLine = clean.split(/\r?\n/)[0] ?? "";
+  const delimiter = (firstLine.match(/;/g)?.length ?? 0) > (firstLine.match(/,/g)?.length ?? 0) ? ";" : ",";
+  const res = Papa.parse<Record<string, string>>(clean, {
+    header: true, delimiter, skipEmptyLines: "greedy",
+    transformHeader: (h) => h.trim().toLowerCase(),
+  });
+  const fields = res.meta.fields ?? [];
+  const missing = ["phone", "firstname", "lastname"].filter((f) => !fields.includes(f));
+  if (missing.length) return { rows: [], headerError: `Missing column(s): ${missing.join(", ")}` };
+  const starts = recordStartLines(clean);
+  const useStarts = starts.length - 1 === res.data.length;
+  const seen = new Set<string>();
+  const rows = res.data.map((raw, i) => {
+    const errors: string[] = [];
+    const phone = normalizePhone(raw["phone"] ?? "");
+    if (!phone) errors.push("Invalid phone");
+    else if (seen.has(phone)) errors.push("Duplicate phone in file");
+    else seen.add(phone);
+    const firstName = (raw["firstname"] ?? "").trim(); if (!firstName) errors.push("First name is empty");
+    const lastName = (raw["lastname"] ?? "").trim();
+    return { line: useStarts ? (starts[i + 1] ?? i + 2) : i + 2, raw, phone, firstName, lastName, errors };
+  });
+  return { rows, headerError: null };
+}
+
 export function parseSmsCsv(text: string, now = new Date()): { rows: CsvRow[]; headerError: string | null } {
   const clean = text.replace(/^\uFEFF/, "");
   const firstLine = clean.split(/\r?\n/)[0] ?? "";

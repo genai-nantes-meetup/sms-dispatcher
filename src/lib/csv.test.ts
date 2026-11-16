@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseSmsCsv, DEMO_CSV } from "./csv";
+import { parseSmsCsv, parseRecipientsCsv, DEMO_CSV, RECIPIENTS_DEMO_CSV } from "./csv";
 import { normalizePhone } from "./phone";
 import { smsStats } from "./sms-encoding";
 
