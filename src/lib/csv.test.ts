@@ -27,6 +27,13 @@ describe("csv import", () => {
     expect(rows[0]!.message).toBe("Hi $firstname.\nGate: B12");
     expect(rows[0]!.line).toBe(2);
   });
+  it("demo CSV turns the \\n row into a real line break", () => {
+    const { rows } = parseSmsCsv(DEMO_CSV, NOW);
+    const esc = rows[5]!;
+    expect(esc.errors).toEqual([]);
+    expect(esc.message).toBe("Hi $firstname, your seat is confirmed.\nGate: B12\nTime: 09:30");
+    expect(esc.line).toBe(11);
+  });
   it("numbers rows after a multi-line message by their real file line", () => {
     const csv = 'phone,firstname,lastname,message,send_at\n0600000002,Bruno,Leroy,"line one\nline two",01/12/2026 09:30\n0600000003,Carla,Dumas,"single",01/12/2026 10:00\n';
     const { rows } = parseSmsCsv(csv, NOW);
