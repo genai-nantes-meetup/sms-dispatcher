@@ -130,14 +130,14 @@ function ImportPage() {
               <tr><td className="pr-3 font-mono text-xs font-medium">phone</td><td className="text-muted-foreground">French or international number (+33…, 06…, +44…)</td></tr>
               <tr><td className="pr-3 font-mono text-xs font-medium">firstname</td><td className="text-muted-foreground">Recipient first name</td></tr>
               <tr><td className="pr-3 font-mono text-xs font-medium">lastname</td><td className="text-muted-foreground">Recipient last name</td></tr>
-              <tr><td className="pr-3 font-mono text-xs font-medium">message</td><td className="text-muted-foreground">SMS text; quote it if it contains commas or line breaks. Variables: $firstname, $lastname, $fullname</td></tr>
+              <tr><td className="pr-3 font-mono text-xs font-medium">message</td><td className="text-muted-foreground">SMS text; quote it if it contains commas or line breaks. Write \n for a new line. Variables: $firstname, $lastname, $fullname</td></tr>
               <tr><td className="pr-3 font-mono text-xs font-medium">send_at</td><td className="text-muted-foreground">YYYY-MM-DD HH:mm or DD/MM/YYYY HH:mm, your local time, in the future</td></tr>
             </tbody>
           </table>
           <pre className="overflow-x-auto rounded-lg bg-muted p-3 font-mono text-[11px] leading-relaxed">{DEMO_CSV}</pre>
           <p className="flex gap-2 text-sm text-muted-foreground">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-            <span>The last row is a multi-line SMS: the cell is wrapped in quotes, so you can press Enter inside it to start a new line.</span>
+            <span>Two ways to write a multi-line SMS: press Enter inside the quotes (row 6), or write \n where you want a line break (row 7).</span>
           </p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={copyDemo}><Copy /> Copy</Button>

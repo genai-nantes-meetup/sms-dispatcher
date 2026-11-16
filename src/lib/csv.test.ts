@@ -6,9 +6,9 @@ import { smsStats } from "./sms-encoding";
 const NOW = new Date("2026-11-11T12:00:00Z");
 
 describe("csv import", () => {
-  it("demo CSV gives 5 valid rows", () => {
+  it("demo CSV gives 6 valid rows", () => {
     const { rows } = parseSmsCsv(DEMO_CSV, NOW);
-    expect(rows).toHaveLength(5);
+    expect(rows).toHaveLength(6);
     expect(rows.every((r) => r.errors.length === 0)).toBe(true);
     expect(rows[3]!.phone).toBe("+447700900004");
   });
@@ -19,6 +19,13 @@ describe("csv import", () => {
     expect(multi.phone).toBe("+33600000005");
     expect(multi.message).toBe("Hi $firstname,\nyour pass is ready:\n- gate B12\n- time 09:30\nSee you there!");
     expect(multi.line).toBe(6);
+  });
+  it("turns the \\n escape sequence into a real line break", () => {
+    const csv = 'phone,firstname,lastname,message,send_at\n0600000006,Franck,Petit,"Hi $firstname.\nGate: B12",01/12/2026 09:30\n';
+    const { rows } = parseSmsCsv(csv, NOW);
+    expect(rows[0]!.errors).toEqual([]);
+    expect(rows[0]!.message).toBe("Hi $firstname.\nGate: B12");
+    expect(rows[0]!.line).toBe(2);
   });
   it("numbers rows after a multi-line message by their real file line", () => {
     const csv = 'phone,firstname,lastname,message,send_at\n0600000002,Bruno,Leroy,"line one\nline two",01/12/2026 09:30\n0600000003,Carla,Dumas,"single",01/12/2026 10:00\n';
