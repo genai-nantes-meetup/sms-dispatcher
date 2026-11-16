@@ -111,7 +111,7 @@ function ImportPage() {
                         <td className="p-3 text-muted-foreground">{r.line}</td>
                         <td className="whitespace-nowrap p-3">{r.phone ? formatPhone(r.phone) : r.raw["phone"]}</td>
                         <td className="p-3">{r.firstName}</td><td className="p-3">{r.lastName}</td>
-                        <td className="max-w-xs p-3"><span className="line-clamp-2">{r.message}</span></td>
+                        <td className="max-w-xs p-3"><span className="line-clamp-3 whitespace-pre-line">{r.message}</span></td>
                         <td className="whitespace-nowrap p-3">{r.sendAt ? fmtParis(r.sendAt.toISOString()) : r.raw["send_at"]}</td>
                         <td className="p-3">{r.errors.length ? <span className="text-xs font-medium text-destructive">{r.errors.join(", ")}</span> : <span className="text-xs font-medium text-success">OK</span>}</td>
                       </tr>
@@ -130,11 +130,15 @@ function ImportPage() {
               <tr><td className="pr-3 font-mono text-xs font-medium">phone</td><td className="text-muted-foreground">French or international number (+33…, 06…, +44…)</td></tr>
               <tr><td className="pr-3 font-mono text-xs font-medium">firstname</td><td className="text-muted-foreground">Recipient first name</td></tr>
               <tr><td className="pr-3 font-mono text-xs font-medium">lastname</td><td className="text-muted-foreground">Recipient last name</td></tr>
-              <tr><td className="pr-3 font-mono text-xs font-medium">message</td><td className="text-muted-foreground">SMS text; quote it if it contains commas. Variables: $firstname, $lastname, $fullname</td></tr>
+              <tr><td className="pr-3 font-mono text-xs font-medium">message</td><td className="text-muted-foreground">SMS text; quote it if it contains commas or line breaks. Variables: $firstname, $lastname, $fullname</td></tr>
               <tr><td className="pr-3 font-mono text-xs font-medium">send_at</td><td className="text-muted-foreground">YYYY-MM-DD HH:mm or DD/MM/YYYY HH:mm, your local time, in the future</td></tr>
             </tbody>
           </table>
           <pre className="overflow-x-auto rounded-lg bg-muted p-3 font-mono text-[11px] leading-relaxed">{DEMO_CSV}</pre>
+          <p className="flex gap-2 text-sm text-muted-foreground">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <span>The last row is a multi-line SMS: the cell is wrapped in quotes, so you can press Enter inside it to start a new line.</span>
+          </p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={copyDemo}><Copy /> Copy</Button>
             <Button variant="outline" size="sm" onClick={downloadDemo}><Download /> Download demo.csv</Button>
