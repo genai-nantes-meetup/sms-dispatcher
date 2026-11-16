@@ -137,7 +137,7 @@ function ImportPage() {
           <pre className="overflow-x-auto rounded-lg bg-muted p-3 font-mono text-[11px] leading-relaxed">{DEMO_CSV}</pre>
           <p className="flex gap-2 text-sm text-muted-foreground">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-            <span>Two ways to write a multi-line SMS: press Enter inside the quotes (row 6), or write \n where you want a line break (row 7).</span>
+            <span>Two ways to write a multi-line SMS: press Enter inside the quotes (the Eve row), or write \n where you want a line break (the Franck row).</span>
           </p>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={copyDemo}><Copy /> Copy</Button>
