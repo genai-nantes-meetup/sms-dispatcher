@@ -12,7 +12,7 @@ your pass is ready:
 - gate B12
 - time 09:30
 See you there!",2026-12-03 08:00
-+33600000006,Franck,Petit,"Hi $firstname, your seat is confirmed.\nGate: B12\nTime: 09:30",2026-12-04 11:00
++33600000006,Franck,Petit,"Hi $firstname, your seat is confirmed.\\nGate: B12\\nTime: 09:30",2026-12-04 11:00
 `;
 
 export type CsvRow = {

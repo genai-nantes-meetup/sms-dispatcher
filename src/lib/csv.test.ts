@@ -21,7 +21,7 @@ describe("csv import", () => {
     expect(multi.line).toBe(6);
   });
   it("turns the \\n escape sequence into a real line break", () => {
-    const csv = 'phone,firstname,lastname,message,send_at\n0600000006,Franck,Petit,"Hi $firstname.\nGate: B12",01/12/2026 09:30\n';
+    const csv = 'phone,firstname,lastname,message,send_at\n0600000006,Franck,Petit,"Hi $firstname.\\nGate: B12",01/12/2026 09:30\n';
     const { rows } = parseSmsCsv(csv, NOW);
     expect(rows[0]!.errors).toEqual([]);
     expect(rows[0]!.message).toBe("Hi $firstname.\nGate: B12");
