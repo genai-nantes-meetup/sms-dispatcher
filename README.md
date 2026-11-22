@@ -1,6 +1,6 @@
 # SMS Dispatcher
 
-A frontend for a SMS gateway (via [HTTPSMS](https://httpsms.com)).
+A frontend for a SMS gateway (via [HTTPSMS](https://httpsms.com)). Uses a real SIM card.
 
 Used during [GenAI Days Nantes](https://genai-days-nantes.com/) to send notifications to speakers or VIPs, 15 minutes before their talk, meeting, etc.
 
