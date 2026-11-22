@@ -10,6 +10,7 @@ Built with [Lovable](https://lovable.dev).
 
 ## Features
 
+- Gateway to a real SIM card (Android)
 - Scheduling
 - CSV import
 - Rate-limit: send 30 SMS per minute to prevent ban
